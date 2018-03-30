@@ -37,3 +37,33 @@ app
     if (err) throw err
     console.log(`App Listening on Port ${port}`)
   })
+
+  /**
+ * GET /search
+ * Search for a term in the library
+ */
+router.get('/search', async (ctx, next) => {
+    const { term, offset } = ctx.request.query
+    ctx.body = await search.queryTerm(term, offset)
+  }
+)
+
+/**
+ * GET /search
+ * Search for a term in the library
+ * Query Params -
+ * term: string under 60 characters
+ * offset: positive integer
+ */
+router.get('/search',
+  validate({
+    query: {
+      term: joi.string().max(60).required(),
+      offset: joi.number().integer().min(0).default(0)
+    }
+  }),
+  async (ctx, next) => {
+    const { term, offset } = ctx.request.query
+    ctx.body = await search.queryTerm(term, offset)
+  }
+)
